@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+    int popularity;
+    struct node *link;
+}*start=NULL;
+
+void delete(struct node **start,int d)
+{
+
+     struct node *current = *start;
+     struct node *max = *start;
+     struct node *temp;
+
+     while (current != NULL && current->link != NULL && d)
+     {
+         if(current->link->popularity < max->popularity)
+         {
+             temp = current->link;
+             current->link = temp->link;
+             free(temp);
+             d--;
+         }
+          else
+         {
+             current = current->link;
+             max = current;
+         }
+     }
+
+}
+
+struct node* reverse(struct node *root)
+{
+    struct node *temp;  
+    if(root==NULL || root->link==NULL)
+        return root;
+    temp=reverse(root->link);
+    root->link->link=root;
+    root->link=NULL;
+    return temp;
+}
+
+int main()
+{
+    struct node *tmp,*p;
+    int t,n,i,item,k,d;
+    scanf("%d",&t);
+    while(t--)
+    {
+        p=start=NULL;
+        scanf("%d",&n);
+        scanf("%d",&d);
+        for(i=0;i<n;i++)
+        {
+            scanf("%d",&item);
+            tmp=(struct node *)malloc(sizeof(struct node));
+            tmp->popularity=item;
+            tmp->link=NULL;
+            if(start==NULL)
+                start=tmp;
+            else
+            {
+                p=start;
+                while(p->link)
+                    p=p->link;
+                p->link=tmp;
+            }
+        }
+        start=reverse(start);
+        delete(&start,d);
+        start=reverse(start);
+        p=start;
+        while(p!=NULL)
+        {
+            printf("%d ",p->popularity);
+            p=p->link;
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
